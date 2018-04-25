@@ -1,5 +1,26 @@
 import skeleton_v2 as s
 import numpy as np
+from matplotlib import pyplot as plt
+
+path = "data/"
+db_nonsep_test = path + "data_big_nonsep_test.csv"
+db_nonsep_train = path + "data_big_nonsep_train.csv"
+db_sep_test = path + "data_big_separable_test.csv"
+db_sep_train = path + "data_big_separable_train.csv"
+ds_nonsep_test = path + "data_small_nonsep_test.csv"
+ds_nonsep_train = path + "data_small_nonsep_train.csv"
+ds_sep_test = path + "data_small_separable_test.csv"
+ds_sep_train = path + "data_small_separable_train.csv"
+
+
+def from_file(file):
+    data = []
+    target = []
+    for line in open(file).readlines():
+        l = [float(x) for x in line.replace("\n", "").split("\t")]
+        target.append(l.pop(-1))
+        data.append(l)
+    return [np.array(data), np.array(target)]
 
 
 def simple_loss(w):
@@ -31,3 +52,14 @@ def partial_deriv(x_i, x, w, include):
 
 def update(old_w, new_w, alpha):
     return [old_w - (alpha * new_w)]
+
+
+def perceptron_test(train_data, test_data, method, separable):
+    print("---- Start test: " + separable + " data - Method: " + method.__name__ + " ----")
+    data = []
+    for train, test in zip(train_data, test_data):
+        data.append(s.train_and_test(train[0], train[1], test[0], test[1], method, 0.3, 100))
+    print("---- End test: " + separable + " data - Method: " + method.__name__ + " ----\n\n")
+    return data
+
+
